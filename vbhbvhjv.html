@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <img id="language-icon" src="saudi-arabia-flag.png" alt="العربية" style="cursor: pointer;" />
+        <ul id="language-menu" style="display: none; list-style: none; padding: 0; position: absolute; background: white; border: 1px solid #ccc;">
+          <li onclick="changeLanguage('ar')"><img src="saudi-arabia-flag.png" alt="العربية" /> العربية</li>
+          <li onclick="changeLanguage('en')"><img src="uk-flag.png" alt="English" /> English</li>
+        </ul>
+      </header>
+      <h1 id="site-title"></h1>
+      <p id="welcome-message"></p>
+</body>      
+<h1 id="site-title"></h1>
+<p id="welcome-message"></p>
+</body>
+</html>
+<script>
+
+const languageIcon = document.getElementById('language-icon');
+const languageMenu = document.getElementById('language-menu');
+
+// عرض قائمة اللغة عند النقر على الأيقونة
+languageIcon.addEventListener('click', () => {
+  languageMenu.style.display = languageMenu.style.display === 'none' ? 'block' : 'none';
+});
+
+async function changeLanguage(language) {
+  try {
+    // تخزين اللغة المحددة في Local Storage
+    localStorage.setItem('language', language);
+
+    // تحميل ملف الترجمة
+    const response = await fetch(translations/${language}.json);
+    if (!response.ok) {
+      throw new Error(HTTP error! status: ${response.status});
+    }
+
+    // قراءة البيانات كـ JSON
+    const translations = await response.json();
+
+    // تحديث النصوص في الصفحة
+    document.getElementById('site-title').textContent = translations.siteTitle;
+    document.getElementById('welcome-message').textContent = translations.welcomeMessage;
+    document.getElementById('demo-text').textContent = translations.demoText;
+
+    // تحديث اللغة والاتجاه
+    if (language === 'en') {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+      document.body.style.textAlign = 'left';
+      languageIcon.src = 'uk-flag.png';
+      languageIcon.alt = 'English';
+    } else if (language === 'ar') {
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+      document.body.style.textAlign = 'right';
+      languageIcon.src = 'saudi-arabia-flag.png';
+      languageIcon.alt = 'العربية';
+    }
+
+    // إخفاء القائمة بعد الاختيار
+    languageMenu.style.display = 'none';
+  } catch (error) {
+    console.error('Error changing language:', error);
+  }
+}
+
+// تحميل اللغة الافتراضية عند فتح الموقع
+document.addEventListener('DOMContentLoaded', () => {
+  const savedLanguage = localStorage.getItem('language') || 'ar';
+  changeLanguage(savedLanguage);
+});
+
+</script>
